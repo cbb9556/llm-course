@@ -133,13 +133,12 @@ Neural networks are a fundamental part of many machine learning models, particul
 
 ### 4. Natural Language Processing (NLP)
 
-NLP 是人工智能的一个迷人分支，它弥合了人类语言和机器理解之间的差距。从简单的文本处理到理解语言的细微差别，NLP 在许多应用程序中发挥着至关重要的作用，例如翻译、情感分析、聊天机器人等等。
+NLP is a fascinating branch of artificial intelligence that bridges the gap between human language and machine understanding. From simple text processing to understanding linguistic nuances, NLP plays a crucial role in many applications like translation, sentiment analysis, chatbots, and much more.
 
-- **文本预处理**：了解各种文本预处理步骤，如分词（将文本拆分为单词或句子）、词干提取（将单词减少到其根形式）、词形还原（类似于词干提取，但要考虑上下文）、停用词删除等。
-- **特征提取技术**：熟悉将文本数据转换为机器学习算法可以理解的格式的技术。主要方法包括词袋 （BoW）、词频逆文档频率 （TF-IDF） 和 n-grams。
-- **单词嵌入**：单词嵌入是一种单词表示形式，它允许具有相似含义的单词具有相似的表示形式。主要方法包括 Word2Vec、GloVe 和 FastText。
-- **循环神经网络 （RNN）**：了解 RNN 的工作原理，RNN 是一种旨在处理序列数据的神经网络。探索 LSTM 和 GRU，这两种 RNN 变体能够学习长期依赖关系。
-
+- **Text Preprocessing**: Learn various text preprocessing steps like tokenization (splitting text into words or sentences), stemming (reducing words to their root form), lemmatization (similar to stemming but considers the context), stop word removal, etc.
+- **Feature Extraction Techniques**: Become familiar with techniques to convert text data into a format that can be understood by machine learning algorithms. Key methods include Bag-of-words (BoW), Term Frequency-Inverse Document Frequency (TF-IDF), and n-grams.
+- **Word Embeddings**: Word embeddings are a type of word representation that allows words with similar meanings to have similar representations. Key methods include Word2Vec, GloVe, and FastText.
+- **Recurrent Neural Networks (RNNs)**: Understand the working of RNNs, a type of neural network designed to work with sequence data. Explore LSTMs and GRUs, two RNN variants that are capable of learning long-term dependencies.
 📚 Resources:
 
 - [RealPython - NLP with spaCy in Python](https://realpython.com/natural-language-processing-spacy-python/): Exhaustive guide about the spaCy library for NLP tasks in Python.
@@ -149,9 +148,9 @@ NLP 是人工智能的一个迷人分支，它弥合了人类语言和机器理�
 - [colah's blog - Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/): A more theoretical article about the LSTM network.
 </details>
 
-## 🧑‍🔬 大模型科学家
+## 🧑‍🔬 The LLM Scientist
 
-本课程的这一部分侧重于学习如何使用最新技术构建最好的 LLM。
+This section of the course focuses on learning how to build the best possible LLMs using the latest techniques.
 
 ![](img/roadmap_scientist.png)
 
