@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🗣️ Large Language Model Course</h1>
+  <h1>🗣️ neo的大模型课程 </h1>
   <p align="center">
     🐦 <a href="https://twitter.com/maximelabonne">Follow me on X</a> • 
     🤗 <a href="https://huggingface.co/mlabonne">Hugging Face</a> • 
@@ -9,33 +9,33 @@
 </div>
 <br/>
 
-The LLM course is divided into three parts:
+大模型课程分为3个部分：
 
-1. 🧩 **LLM Fundamentals** covers essential knowledge about mathematics, Python, and neural networks.
-2. 🧑‍🔬 **The LLM Scientist** focuses on building the best possible LLMs using the latest techniques.
-3. 👷 **The LLM Engineer** focuses on creating LLM-based applications and deploying them.
+1. 🧩 **大模型基础设施** 包括潜在的数学知识, Python, and neural networks.
+2. 🧑‍🔬 **大模型科学家** 专注于实验最近的技术构造尽可能好的LLMs.
+3. 👷 **大模型工程师** 专注于创造基于大模型的应用并部署他们.
 
-For an interactive version of this course, I created two **LLM assistants** that will answer questions and test your knowledge in a personalized way:
+我们创造了一个 LLM模型，能够回答和测试你需要的知识，通过交互的方式完成这门课程.
 
-* 🤗 [**HuggingChat Assistant**](https://hf.co/chat/assistant/66029d2e5f4a884f7aabc9d1): Free version using Mixtral-8x7B.
-* 🤖 [**ChatGPT Assistant**](https://chat.openai.com/g/g-yviLuLqvI-llm-course): Requires a premium account.
+* 🤗 [**HuggingChat Assistant**](https://hf.co/chat/assistant/66029d2e5f4a884f7aabc9d1): 使用Mixtral-8x7B的免费版本.
+* 🤖 [**ChatGPT Assistant**](https://chat.openai.com/g/g-yviLuLqvI-llm-course): 需要高级帐户.
 
 ## 📝 Notebooks
 
-A list of notebooks and articles related to large language models.
+一系列与大模型相关的 notebook 和 文章
 
 ### Tools
 
-| Notebook | Description | Notebook |
-|----------|-------------|----------|
-| 🧐 [LLM AutoEval](https://github.com/mlabonne/llm-autoeval) | Automatically evaluate your LLMs using RunPod | <a href="https://colab.research.google.com/drive/1Igs3WZuXAIv9X0vwqiE90QlEPys8e8Oa?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
-| 🥱 LazyMergekit | Easily merge models using MergeKit in one click. | <a href="https://colab.research.google.com/drive/1obulZ1ROXHjYLn6PPZJwRR6GzgQogxxb?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
-| 🦎 LazyAxolotl | Fine-tune models in the cloud using Axolotl in one click. | <a href="https://colab.research.google.com/drive/1TsDKNo2riwVmU55gjuBgB1AXVtRRfRHW?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
-| ⚡ AutoQuant | Quantize LLMs in GGUF, GPTQ, EXL2, AWQ, and HQQ formats in one click. | <a href="https://colab.research.google.com/drive/1b6nqC7UZVt8bx4MksX7s656GXPM-eWw4?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
-| 🌳 Model Family Tree | Visualize the family tree of merged models. | <a href="https://colab.research.google.com/drive/1s2eQlolcI1VGgDhqWIANfkfKvcKrMyNr?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
-| 🚀 ZeroSpace | Automatically create a Gradio chat interface using a free ZeroGPU. | <a href="https://colab.research.google.com/drive/1LcVUW5wsJTO2NGmozjji5CkC--646LgC"><img src="img/colab.svg" alt="Open In Colab"></a> |
+| Notebook | Description                                       | Notebook |
+|----------|---------------------------------------------------|----------|
+| 🧐 [LLM AutoEval](https://github.com/mlabonne/llm-autoeval) | 使用RunPod自动评估你的大模型                                 | <a href="https://colab.research.google.com/drive/1Igs3WZuXAIv9X0vwqiE90QlEPys8e8Oa?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
+| 🥱 LazyMergekit | 只需要简单地点击，就能够合并你的模型                                | <a href="https://colab.research.google.com/drive/1obulZ1ROXHjYLn6PPZJwRR6GzgQogxxb?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
+| 🦎 LazyAxolotl | 使用Axolotl，只需要一次点击就能够在云端微调你的模型                     | <a href="https://colab.research.google.com/drive/1TsDKNo2riwVmU55gjuBgB1AXVtRRfRHW?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
+| ⚡ AutoQuant | 只需要一次点击，就能使用GGUF, GPTQ, EXL2, AWQ, and HQQ进行模型量化. | <a href="https://colab.research.google.com/drive/1b6nqC7UZVt8bx4MksX7s656GXPM-eWw4?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
+| 🌳 Model Family Tree | 可视化模型合并的 family tree.                             | <a href="https://colab.research.google.com/drive/1s2eQlolcI1VGgDhqWIANfkfKvcKrMyNr?usp=sharing"><img src="img/colab.svg" alt="Open In Colab"></a> |
+| 🚀 ZeroSpace | 自动创建一个Gradio chat接口，使用免费的ZeroGPU.                 | <a href="https://colab.research.google.com/drive/1LcVUW5wsJTO2NGmozjji5CkC--646LgC"><img src="img/colab.svg" alt="Open In Colab"></a> |
 
-### Fine-tuning
+### 微调
 
 | Notebook | Description | Article | Notebook |
 |---------------------------------------|-------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -67,7 +67,7 @@ A list of notebooks and articles related to large language models.
 
 ## 🧩 LLM Fundamentals
 
-This section introduces essential knowledge about mathematics, Python, and neural networks. You might not want to start here but refer to it as needed.
+这个章节解释了数学、Python 和神经网络等基础知识。您可能不需要从这里开始，但可以按需参考。
 
 <details>
 <summary>Toggle section</summary>
@@ -76,9 +76,9 @@ This section introduces essential knowledge about mathematics, Python, and neura
 
 ### 1. Mathematics for Machine Learning
 
-Before mastering machine learning, it is important to understand the fundamental mathematical concepts that power these algorithms.
+在机器学习之前，了解数学基础是重要的。
 
-- **Linear Algebra**: This is crucial for understanding many algorithms, especially those used in deep learning. Key concepts include vectors, matrices, determinants, eigenvalues and eigenvectors, vector spaces, and linear transformations.
+- **线性代数**：线性代数是许多算法的基础，例如深度学习中的线性回归和神经网络。关键概念包括向量、矩阵、行列式、特征值和特征向量、向量空间和线性变换。
 - **Calculus**: Many machine learning algorithms involve the optimization of continuous functions, which requires an understanding of derivatives, integrals, limits, and series. Multivariable calculus and the concept of gradients are also important.
 - **Probability and Statistics**: These are crucial for understanding how models learn from data and make predictions. Key concepts include probability theory, random variables, probability distributions, expectations, variance, covariance, correlation, hypothesis testing, confidence intervals, maximum likelihood estimation, and Bayesian inference.
 
@@ -135,10 +135,10 @@ Neural networks are a fundamental part of many machine learning models, particul
 
 NLP 是人工智能的一个迷人分支，它弥合了人类语言和机器理解之间的差距。从简单的文本处理到理解语言的细微差别，NLP 在许多应用程序中发挥着至关重要的作用，例如翻译、情感分析、聊天机器人等等。
 
-- **文本预处理**：了解各种文本预处理步骤，如分词（将文本拆分为单词或句子）、词干提取（将单词减少到其根形式）、词形还原（类似于词干提取，但要考虑上下文）、停用词删除等。
-- **特征提取技术**：熟悉将文本数据转换为机器学习算法可以理解的格式的技术。主要方法包括词袋 （BoW）、词频逆文档频率 （TF-IDF） 和 n-grams。
-- **单词嵌入**：单词嵌入是一种单词表示形式，它允许具有相似含义的单词具有相似的表示形式。主要方法包括 Word2Vec、GloVe 和 FastText。
-- **循环神经网络 （RNN）**：了解 RNN 的工作原理，RNN 是一种旨在处理序列数据的神经网络。探索 LSTM 和 GRU，这两种 RNN 变体能够学习长期依赖关系。
+- **Text Preprocessing**: Learn various text preprocessing steps like tokenization (splitting text into words or sentences), stemming (reducing words to their root form), lemmatization (similar to stemming but considers the context), stop word removal, etc.
+- **Feature Extraction Techniques**: Become familiar with techniques to convert text data into a format that can be understood by machine learning algorithms. Key methods include Bag-of-words (BoW), Term Frequency-Inverse Document Frequency (TF-IDF), and n-grams.
+- **Word Embeddings**: Word embeddings are a type of word representation that allows words with similar meanings to have similar representations. Key methods include Word2Vec, GloVe, and FastText.
+- **Recurrent Neural Networks (RNNs)**: Understand the working of RNNs, a type of neural network designed to work with sequence data. Explore LSTMs and GRUs, two RNN variants that are capable of learning long-term dependencies.
 
 📚 Resources:
 
@@ -149,9 +149,9 @@ NLP 是人工智能的一个迷人分支，它弥合了人类语言和机器理�
 - [colah's blog - Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/): A more theoretical article about the LSTM network.
 </details>
 
-## 🧑‍🔬 大模型科学家
+## 🧑‍🔬 The LLM Scientist
 
-本课程的这一部分侧重于学习如何使用最新技术构建最好的 LLM。
+This section of the course focuses on learning how to build the best possible LLMs using the latest techniques.
 
 ![](img/roadmap_scientist.png)
 
