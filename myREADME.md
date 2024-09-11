@@ -154,14 +154,14 @@ NLP 是人工智能的一个迷人分支，它弥合了人类语言和机器理�
 
 ![](img/roadmap_scientist.png)
 
-### 1. The LLM architecture
+### 1. LLM 架构
 
-While an in-depth knowledge about the Transformer architecture is not required, it is important to have a good understanding of its inputs (tokens) and outputs (logits). The vanilla attention mechanism is another crucial component to master, as improved versions of it are introduced later on.
+虽然不需要对 Transformer 架构有深入的了解，但重要的是要很好地理解它的输入（token）和输出（logits）。原版注意力机制是另一个需要掌握的关键组成部分，因为稍后会介绍它的改进版本。
 
-* **High-level view**: Revisit the encoder-decoder Transformer architecture, and more specifically the decoder-only GPT architecture, which is used in every modern LLM.
-* **Tokenization**: Understand how to convert raw text data into a format that the model can understand, which involves splitting the text into tokens (usually words or subwords).
-* **Attention mechanisms**: Grasp the theory behind attention mechanisms, including self-attention and scaled dot-product attention, which allows the model to focus on different parts of the input when producing an output.
-* **Text generation**: Learn about the different ways the model can generate output sequences. Common strategies include greedy decoding, beam search, top-k sampling, and nucleus sampling.
+* **高级视图**：重新审视编码器-解码器 Transformer 架构，更具体地说，是每个现代 LLM 中使用的仅解码器 GPT 架构。
+* **分词**：了解如何将原始文本数据转换为模型可以理解的格式，这涉及将文本拆分为分词（通常是单词或子词）。
+* **注意力机制**：掌握注意力机制背后的理论，包括自我注意和缩放点积注意力，这使模型在产生输出时能够专注于输入的不同部分。
+* **文本生成**：了解模型生成输出序列的不同方式。常见的策略包括贪婪解码、波束搜索、top-k 采样和原子核采样。
 
 📚 **References**:
 * [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/) by Jay Alammar: A visual and intuitive explanation of the Transformer model.
@@ -173,11 +173,11 @@ While an in-depth knowledge about the Transformer architecture is not required, 
 * [Decoding Strategies in LLMs](https://mlabonne.github.io/blog/posts/2023-06-07-Decoding_strategies.html): Provide code and a visual introduction to the different decoding strategies to generate text.
 
 ---
-### 2. Building an instruction dataset
+### 2. 构建指令数据集
 
-While it's easy to find raw data from Wikipedia and other websites, it's difficult to collect pairs of instructions and answers in the wild. Like in traditional machine learning, the quality of the dataset will directly influence the quality of the model, which is why it might be the most important component in the fine-tuning process.
+虽然很容易从维基百科和其他网站找到原始数据，但很难在野外收集成对的指令和答案。与传统机器学习一样，数据集的质量将直接影响模型的质量，这就是为什么它可能是微调过程中最重要的组成部分。
 
-* **[Alpaca](https://crfm.stanford.edu/2023/03/13/alpaca.html)-like dataset**: Generate synthetic data from scratch with the OpenAI API (GPT). You can specify seeds and system prompts to create a diverse dataset.
+* **[Alpaca](https://crfm.stanford.edu/2023/03/13/alpaca.html)-like dataset**: Generate synthetic data from scratch with the OpenAI API (GPT). 使用 OpenAI API （GPT） 从头开始生成合成数据。您可以指定种子和系统提示来创建多样化的数据集。
 * **Advanced techniques**: Learn how to improve existing datasets with [Evol-Instruct](https://arxiv.org/abs/2304.12244), how to generate high-quality synthetic data like in the [Orca](https://arxiv.org/abs/2306.02707) and [phi-1](https://arxiv.org/abs/2306.11644) papers.
 * **Filtering data**: Traditional techniques involving regex, removing near-duplicates, focusing on answers with a high number of tokens, etc.
 * **Prompt templates**: There's no true standard way of formatting instructions and answers, which is why it's important to know about the different chat templates, such as [ChatML](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/chatgpt?tabs=python&pivots=programming-language-chat-ml), [Alpaca](https://crfm.stanford.edu/2023/03/13/alpaca.html), etc.
