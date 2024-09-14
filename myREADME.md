@@ -212,7 +212,7 @@ Pre-training is a very long and costly process, which is why this is not the foc
 ---
 ### 4. Supervised Fine-Tuning
 
-Pre-trained models are only trained on a next-token prediction task, which is why they're not helpful assistants. SFT allows you to tweak them to respond to instructions. Moreover, it allows you to fine-tune your model on any data (private, not seen by GPT-4, etc.) and use it without having to pay for an API like OpenAI's.
+预先训练的模型仅在 next-token 预测任务上进行训练，这就是为什么它们不是有用的助手。SFT 允许您调整它们以响应说明。此外，它允许您在任何数据（私有、GPT-4 看不到等）上微调您的模型并使用它，而无需为像 OpenAI 这样的 API 付费。
 
 * **Full fine-tuning**: Full fine-tuning refers to training all the parameters in the model. It is not an efficient technique, but it produces slightly better results.
 * [**LoRA**](https://arxiv.org/abs/2106.09685): A parameter-efficient technique (PEFT) based on low-rank adapters. Instead of training all the parameters, we only train these adapters.
