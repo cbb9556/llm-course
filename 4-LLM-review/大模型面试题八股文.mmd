@@ -318,6 +318,26 @@
 
 ## attention升级面
 
+## 大模型（LLMs）参数高效微调\(PEFT\) 面
+
+### 模型显存占用有哪些
+
+####  静态显存
+
+##### 基本由模型参数量级决定；
+
+#### 动态显存
+
+##### 在向前传播的过程中每个样本的每个神经元都会计算激活值并存储
+
+##### 用于向后传播时的梯度计算，这部分和batchsize以及参数量级相关
+
+### 模型显存占用 优化策略
+
+#### 8bit量化优化。该方式只要用于优化 静态显存
+
+####  梯度检查优化。该方式只要用于优化 动态显存
+
 ## 大模型强化学习
 
 ### RLHF PPO算法的不足之处
@@ -342,7 +362,11 @@
 
 ### 综述论文
 
-#### https://arxiv\.org/pdf/2407\.16216
+#### 参考
+
+##### https://arxiv\.org/pdf/2407\.16216
+
+##### https://zhuanlan\.zhihu\.com/p/711389871
 
 #### RLHF训练的三元组数据集
 
@@ -536,79 +560,167 @@
 
 #### 3个论文解析
 
-##### instructGPT
+##### 2\.3\.1 RLHF/PPO
 
-###### 一个提示，有 K个 响应， 每个响应 
+###### instructGPT
 
-####### 向标注者展示了 K = 4 到 K = 9 个需要排序的回复
+####### 一个提示，有 K个 响应， 每个响应 
 
-####### 为每个呈现给标注者的提示生成了 C^K\_2 个比较
+######## 向标注者展示了 K = 4 到 K = 9 个需要排序的回复
 
-######## K个选出2个， 让标记者，进行标记
+######## 为每个呈现给标注者的提示生成了 C^K\_2 个比较
 
-######### 一个 是 desired response 一个undesired response
+######### K个选出2个， 让标记者，进行标记
 
-######### 构成数据集
+########## 一个 是 desired response 一个undesired response
 
-##########  
+########## 构成数据集
+
+###########  
 > mmd.image=`iVBORw0KGgoAAAANSUhEUgAAAFQAAAAXCAIAAAAaxf9UAAAFUklEQVR4XuVYv2vqWhzPP+DW6W1drNN1soM4XMhwsUOxQ6lDaaHgIDgUMwgZROFJBiGTDqKDmEEOPOEMooPEQXSQBAIZAhkki3Rxy5TNd84x5qfe2mt734UHnyE5OfnmfL6/zueE0t+2flhCIRrjNHxtLHOX0WdoheZ8CNZCXAqjVbMYjVUU1R1XmEiUGeFrUNl/0YGusJnv1FW+Klq6OqT3M/VRi4q0/q5EqcxwsZs5qqMRQIxQFQWNLNp5+6nHyMFPUL57DIW5jOagfQu5W4oeTINztjYleABA8jjL0HhuCA10veboe0b0+tElP228UIk6wNO2Muxyosa312Sc0PCQR8QuiksZ1i8i5Q6ZP0UjuZl8gLzPyD+HPuEjr6qa0K7FIve5tjLV0dI3gMtTkR/ZhrYgr30Y+iybqQuSCRulu8bKE/atPOpeR6J37TUeNBSGTlJX99f0I5mGAvDKz80xequ33kU+XhwCOHx+aBECFuBeUsXZVJoxuT52rrHmMlHqabjQzU4hSdFdoPuNHPpEOPKfDkvWTfkU3xmm1zvoRfvWjrwVMmKpwZEw9kZ28H/iN5A/G96a/1T8+eTNKRiwXLfaW+JKDD49C38++S9EiLyx4rjB+P1a+jJIE4Z06TNAuoyLo1t1gLwlFEu8FJz0m7Fov54nLix5PqAjL1URk5+OBln6hfXtsjb85MVuqujVIf8VFCbVHwcHPwAV1qhEFzojYjf2reXe7uEjDyvffS437JxRj+5VOMH2zjpl4znyYvDpFhTPau9Im10UseCxgfeLF87JaGMNIBadXvIbPvPozEAyqApNpJ/i6W4T1OP0IBQKS+C6ANQdXRXUj0ex5itDoZGn2xsdK7PkXc8MzEHWUo1Q5RsbiBTk3DvZWsyJTPIBqcmoz6Y0uI7kveWMlWth6SWP9GZNsKO3EYCmEvFIKFkH2oahdUYbZIWs0uzkXFH8DqRZZ75pPiVJlmlsIo88LovdbLq1/zqRqMSnLpBES5eqYNmsvFznZnvFjQZD6hvJygi26Yxga94qeCOFECkHyNuCeQ9MKQtCtF3gpROPKrlIqXn6PqxP7i7r6DSiS0N6tywUHA+NRe8VaXifHAZlJ5hI26cyreZoyeceb3o4fbwIFjxKhHQyG5yGBqNe8mtP2ptTEaUTopTnVexLDpAPG/7iV/dLR47MoKVbEAx5foYv2n1B3Qj8ABCPqG6FE6DD2dNEJpSo4lInbOOeqkGxuvanPTp3jL3O1VcgWAI2cEoTmwQW0vapiiKHpsm9UqDhJe3UnffjqRbfaN2k8/gAxA3IyWw75h+pCInYDobGpMpNSeMekrg61AnbHjwnaoKuMVfljo4M7tJvVaWjlK8DTW7SfSjNcqldcaJz9O0zdJmA4i0S8961nQTcFIbPCXwKwkdMMGGLtSrchJoCgT4LbnUxZ4n7IKv+ap82+g55VVLGuqXqKy5zy4hkBNZihaVs57DZrDhtcs3xLnl5jk6NqI8sc5elJsqsN+wsfrTex0dj062du78UAZGDirz8s9I1FJZzhMCmmctjIQFbtJNXYjdenI3bpb8yAzjqM8BOXXXUZd1Iaky61pGsKTps7sQcalGJ/E3B9tSiV8qG+v9XICxvNbYQ6p8O9LXvdKFqQNTgocILQJacqO5uNSgqUD2U2NKE5bVwiX4FQuT/T/gZ+Y8otvfhWjMOBfwXcUAdnvDIxhHyusY+JIMy4xdhLUb9u29RpOdUVak+/XD/PZ4Fc9wuY92G++Xpj3wIkp+2W7t3nP+BnwEknDF53ftr9T04KzkKrNiPMDz+yGv2X2Ly6D0kUBeBAAAAAElFTkSuQmCC`
 
 
-######### 训练目标
+####### 训练目标
 
-########## 目标函数
+######## 目标函数
 
-###########  
+#########  
 > mmd.image=`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`
 
 
-##########  最大化奖励
+########  最大化奖励
 
-########### 让 desired的label 出现得越多
+######### 让 desired的label 出现得越多
 
-########### undesired的 label 出现得越少越好
+######### undesired的 label 出现得越少越好
 
-########## KL div最小， 相对于 ref
+######## 最小化当前RL策略与初始参考（SFT）策略之间的差异
 
-########### 参数beta 用于控制KL散度的权重，作者建议最优值在0\.01到0\.02之间
+######### 参数beta 用于控制KL散度的权重，作者建议最优值在0\.01到0\.02之间
 
-########## 最小化对齐税
+######## 最小化对齐税
 
-########### γ 参数
+######### 对齐税”指的是LLM在对齐后在下游任务上的性能下降
 
-############ 等于0， 则是普通的PPO
+######### γ 参数
 
-############ 不等于0，则是PPO\-ptx
+########## 等于0， 则是普通的PPO
 
-############# 解决LLM在下游任务，如： NLP数据集上的性能降级
+########## 不等于0，则是PPO\-ptx
 
-###### 训练需要用到的数据集
+########### 解决LLM在下游任务，如： NLP数据集上的性能降级
 
-####### SFT数据集
+####### 训练需要用到的数据集
 
-####### RM数据集
+######## SFT数据集
 
-####### PPO数据集
+######### 包含用于训练SFT模型的标注者示例
 
-###### 对齐评估指标
+######## RM数据集
 
-####### 乐于助人
+######### 由标注者对模型输出的排名组成，用于训练RM
 
-####### 诚实
+######## PPO数据集
 
-######## 封闭域任务上捏造信息的倾向
+######### 由用作RLHF微调输入的提示组成
 
-######## 在TruthfulQA基准上的性能
+######## 相同的输入提示产生了K个输出
 
-####### 危害
+######### 将C\_k^2个比较作为一批处理
 
-######## 标记者，衡量， LLM输出 在上下文是否合适
+########## 改善了过拟合问题
 
-####### 对齐税
+########## 这种方法的一个局限性是它没有考虑响应之间的相对分数
 
-######## NLP下游任务性能 降级情况
+########### 分数相似或分数差异非常大的成对响应被同等对待
+
+########### 后续工作已经考虑到了这个问题\[28\]。
+
+####### RM模型大小
+
+######## instructGPT训练了一个6B的单一奖励模型
+
+######## 还尝试了更大的175B奖励模型\[44\]
+
+######### 更大的RM显示出较低的验证损失
+
+######### 但其训练过程不稳定，并且显著增加了RLHF/PPO的计算需求
+
+####### 对齐评估指标
+
+######## 乐于助人
+
+######## 诚实
+
+######### 封闭域任务上捏造信息的倾向
+
+######### 在TruthfulQA基准上的性能
+
+######### InstructGPT在真实性和毒性任务上相比GPT\-3有所改进
+
+######## 危害
+
+######### 标记者，衡量， LLM输出 在上下文是否合适
+
+######### 人工评估来看
+
+########## 声称“1\.3亿参数的InstructGPT模型的输出优于1750亿参数的GPT\-3
+
+########## 尽管参数少了100倍
+
+######## 对齐税
+
+######### NLP下游任务性能 降级情况
+
+######### PPO\-ptx也在各种NLP基准上展示了较小的性能下降
 
 ###### RLHF Anthrotic
+
+####### 在RLHF的基础上，引入了一种称为RLAIF的新方法 \[9\]
+
+####### 该方法包含两个主要阶段
+
+######## 1\. 通过“宪法”指导的批评与修订进行监督学习
+
+######### 初始阶段，作者采用了思维链（CoT）框架\[46\]
+
+########## 通过基于特定原则的指令来识别无害数据中的潜在危害
+
+########## 称之为“宪法AI（CAI）”
+
+########## 对于CAI，大型语言模型（LLM）充当批评者提供修订
+
+######### 研究结果表明，自监督的批评和修订能够超越人类表现
+
+######### 在此过程中，作者注意到有用性评分下降，而无害性和有用性（IIH）的综合评分有所提高
+
+######### 增加修订次数被证明是有益的，因为它有助于识别和纠正更多有害的回应
+
+######### 重要的是，批评过程被发现至关重要，批评\-修订方法优于仅修订过程
+
+######### 在批评和修订阶段之后
+
+########## 使用从批评\-修订阶段，得到的修订回应对LLM进行了监督微调（SFT）
+
+######## 2\. RLAIF
+
+######### 第二阶段，作者用RLAIF替代了RLHF
+
+########## 在初始阶段，人类标注者标记了有用性数据
+
+########## 而AI系统标记了无害性数据
+
+########## 采用了不同的宪法原则和CoT推理来对齐LLM
+
+########### 旨在最小化伤害同时保持有用性。
+
+####### 这项研究展示了
+
+######## 利用AI收集偏好数据进行自监督AI对齐的可行性
+
+######## 它仅限于无害性而非有用性
+
+######### 因为确保无害性的任务相比确保有用性的任务要简单得多
 
 ####### 对齐税
 
@@ -622,28 +734,112 @@
 
 ######## 最佳参数为0\.001 
 
-###### 在线迭代RLHF
+##### 2\.3\.2 RLAIF\-Google
 
-##### RLAIF
+###### RLHF Anthrotic研究尚未直接比较人类与AI反馈的有效性
 
-###### 人工 anthropic
+####### 这需要进一步探讨\[10\]
 
-####### 匹配 和 修正 SFT
+###### 在AI反馈收集过程中
 
-######## 第一阶段，使用COT框架，识别无害数据中的 潜在危害
+####### 创建了一个结构化提示
 
-######### 被叫做 宪法人工智能
+######## 包括：
 
-######### 进行自监督的 匹配和修正
+######### 1\. 前言
 
-######## 第二阶段，使用RLAIF 替代 RLHF，
+######### 2。少数示例
 
-######### 初始阶段
+######### 3\. 待标注样本
 
-########## 人类注释者标记有用数据
+######### 4。结尾
 
-########## 人工智能系统标记无害数据
+####### 两步评估以生成AI反馈
 
-####### RLAIF
+######## 首先，
 
-###### RLAIF google
+######### 指令的所有四个组成部分与CoT结合，用于从LLM生成回应
+
+######## 在后续阶段
+
+######### LLM的回应附加了类似“偏好总结a”的结尾
+
+######### 发送回LLM以生成偏好概率，例如“总结1=0\.6，总结2=0\.4”
+
+######### 为减少位置偏差，交替了两条回应的顺序，并计算了平均分数。
+
+###### 在RLAIF过程中，采用了两种策略
+
+####### 1\. "蒸馏RLAIF"，
+
+######## 遵循传统的RLHF方法，使用偏好训练奖励模型，然后用于训练LLM策略
+
+######### PPO
+
+####### 2。"直接RLAIF"
+
+######## 利用LLM反馈，通过提示其直接输出评估分数作为RL中策略训练的信号。
+
+######### DPO
+
+###### 在评估过程中，采用了三个关键指标
+
+####### 1\. AI标注者一致性：
+
+######## AI与人类标注者之间的一致程度
+
+####### 2。胜率：
+
+######## 在两个候选答案中，人类标注者选择某个答案的概率
+
+####### 3。无害率
+
+######## 人类评估者认为无害的答案所占的百分比。
+
+###### 实验在三个数据集上进行
+
+####### 1\. Reddit TL;DR（摘要）\[47\]
+
+####### 2\. OpenAI的人类偏好（有帮助）
+
+####### 3\. Anthropic有帮助和无害（HH；无害）人类偏好\[3\]
+
+####### PaLM2被用作对齐的LLM\[48\]。
+
+###### 评估结果
+
+####### 在摘要任务上
+
+######## RLHF策略有时会出现幻觉，而RLAIF策略则不会
+
+######## 并且与RLHF相比，RLAIF有时会生成连贯性较差的摘要
+
+######### 他们提到，需要进行更系统的分析来了解这些模式是否在大规模存在。
+
+####### 三个主要结论
+
+######## RLAIF在摘要和有帮助的对话生成任务中与RLHF表现相当，但在无害任务中表现优于RLHF。
+
+######## 。其次，RLAIF展示了即使在LLM标注者与策略大小相同的情况下，也能增强SFT策略的能力。
+
+######## 最后，"直接RLHF"在一致性方面超过了"蒸馏RLHF"。
+
+######### AI与人类标注者之间的一致程度
+
+##### 2\.3\.3 直接人类偏好优化 DPO
+
+###### PPO
+
+####### 传统的RLHF方法通常涉及优化从人类偏好中导出的奖励函数
+
+######## 缺点
+
+######### 增加计算复杂性和在估计和优化奖励时的偏差\-方差权衡\[49\]
+
+######### 占用内存， GPU
+
+###### 简化对齐过程，减少计算开销
+
+###### 2\.3\.3\.1 SliC\-HF
+
+####### 引入了基于人类反馈的序列似然校准（SLiC\-HF）
