@@ -1290,9 +1290,23 @@
 
 #####  n B的模型，最低需要 16\-20 n G的显存
 
-###### 7B 模型 需要 140G 显存
+###### 分析
 
-###### （cpu offload基本不开的情况下）
+####### 基础显存：模型参数\+梯度\+优化器，总共16nG。
+
+######## 解释：
+
+######### 优化器部分必须用fp32（似乎fp16会导致训练不稳定），所以应该是2\+2\+12=16
+
+####### activation占用显存，和max len、batch size有关
+
+###### 比如：7B 模型 需要 140G 显存
+
+####### （cpu offload基本不开的情况下）
+
+###### 7B的vicuna在fsdp下总共160G显存勉强可以训练。（按照上面计算7\*16=112G是基础显存）
+
+###### 所以全量训练准备显存20nG大概是最低要求，除非内存充足，显存不够offload内存补。
 
 ##### vicuna\-7B为例
 
@@ -1301,6 +1315,56 @@
 ###### global batch size<br/>128，max length 2048
 
 ###### 训练时用了FSDP、梯度累积、梯度检查点等方式降显存
+
+##### 一般放出来的模型文件都是fp16的，假设是一个 n B的模型
+
+###### 那么模型文件占 2n G，fp16加载到显存里做推理也<br/>是占 2n G，对外的pr都是 10n 亿参数的模型。
+
+###### llama 65b的权重需要，１３０Ｇ　显存则需要5\* v100 32G才能完整加载到GPU
+
+####### 最少大概50g显存，可以在llama\-65b\-int4（gptq）模型基础上LoRA\[6\]
+
+##### 如何评估你的显卡利用率
+
+###### zero3如果没有nvlink，多卡训练下会变慢。但是一直不知道究竟会变得多慢
+
+###### 下面给出几种方法来评估自己在训<br/>练时发挥了多少gpu性能，以及具体测试方法。
+
+####### flops比值法
+
+######## 测试工具：deepspeed
+
+######## 参考数据：nvidia公布的显卡fp16峰值计算速度（tensor core）
+
+######## gpu利用率 = 实测的flops/显卡理论上的峰值flops
+
+######## deepspeed实测flops 100tflops，而用的是A100卡理论峰值312tflops，可以得到GPU利用率只有 32\.05%
+
+####### throughout估计法
+
+######## 测试工具：手动估算 或者 deepspeed
+
+######## 参考数据：论文中的训练速度或者吞吐量
+
+######## 吞吐量 = example数量/秒/GPU \* max\_length
+
+######## gpu利用率 = 实际吞吐量 / 论文中的吞吐量（假设利用率100%）
+
+######## 实测训练时处理样本速度为 3 example/s，一共有4卡，max length 2048，则吞吐量为 1536 token/s/gpu<br/>根据llama论文知道，他们训练7B模型的吞吐量约为 3300 token/s/gpu，那么GPU利用率只有46\.54%
+
+####### torch profiler分析法
+
+######## 测试工具：torch profiler 及 tensorboard
+
+######## 利用torch profiler记录各个函数的时间，将结果在tensorboard上展示，在gpu kenel视图下，可以看到tensor core<br/>的利用率，比如30%
+
+####### 以上三种方法，在笔者的实验中能得到差不多的利用率指标。
+
+######## 从准确性上看，方案三 \> 方案一 \> 方案二
+
+######## 从易用性上看，方案二 \> 方案一 \> 方案三
+
+######## 如果不想改代码就用方案二估算自己的训练速度是不是合理的，如果想精确分析训练速度的瓶颈还是建议使用方<br/>案三。
 
 #### 内存
 
@@ -3911,8 +3975,6 @@
 ######### AI与人类标注者之间的一致程度
 
 ##### 2\.3\.3 直接人类偏好优化 DPO
-> collapsed=`true`
-
 
 ###### PPO
 > collapsed=`true`
@@ -4039,26 +4101,18 @@
 ######## RSO 提供了一种更原则性的方法来生成近似于 on\-policy RL 的训练数据
 
 ###### 2\.3\.3\.3 DPO
-> collapsed=`true`
-
 
 ####### PPO的问题
-> collapsed=`true`
-
 
 ######## 需要 大量的计算资源来保持多个模型在内存中（奖励、价值、策略、参考）
 
 ######## PPO的目标函数
-> collapsed=`true`
-
 
 #########  
 > mmd.image=`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`
 
 
 ####### DPO 经过公式推导， 将奖励模型 与 最优策略，联系起来
-> collapsed=`true`
-
 
 ########  
 > collapsed=`true`,mmd.image=`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`
@@ -4103,28 +4157,18 @@
 
 
 ####### DPO存在一定的局限性
-> collapsed=`true`
-
 
 ######## DPO需要新的偏好数据进行进一步优化，这可能难以获取
-> collapsed=`true`
-
 
 ######### 需要精心的人工标注
-> collapsed=`true`
-
 
 ########## 要耗费更多资源
 
 ######## DPO的损失函数仅关注于最大化期望响应与非期望响应之间的差异
-> collapsed=`true`
-
 
 ######### 可能会无意中减少期望响应的奖励或增加非期望响应的奖励
 
 ######## DPO对基础模型输出与偏好数据之间的分布偏移特别敏感\[53\]
-> collapsed=`true`
-
 
 ######### 这种敏感性在基础模型的训练数据与偏好数据集不匹配时会导致性能不佳
 > collapsed=`true`
@@ -4535,3 +4579,97 @@
 #### 39 pdf 没讲清楚
 
 ### 整个八股文都没讲清楚
+
+## 40 训练集面
+
+### SFT（有监督微调）的数据集格式
+
+#### 一问一答
+
+### RM（奖励模型）的数据格式？
+
+#### 一个问题 \+ 一条好回答样例 \+ 一条差回答样例
+
+### PPO（强化学习）的数据格式？
+
+#### 不需要新增数据。需要提供一些prompt，可以直接用sft阶段的问。另外，需要限制<br/>模型不要偏离原模型太远（ptx loss），也可以直接用sft的数据。
+
+### 找数据集哪里找？
+
+#### 推荐Alpaca\-COT，数据集整理的非常全，眼花缭乱。
+
+#### CoT微调数据集：Alpaca\-CoT 里面包括常用的alpaca，CoT等数据集，有中文的。
+
+### 微调需要多少条数据？
+
+#### 取决于预训练数据和微调任务的数据分布是否一致
+
+##### 分布一致，100条就够
+
+##### 分布差异大就需要多<br/>些数据，千条或者万条以上为佳。
+
+#### 自己的任务复杂或者下游任务行业比较冷门
+
+##### 如药品名称识别任务，则需要较多监督数据
+
+##### 还有微调大模型时，一遍是记不住的。<br/>100条的微调数据，epochs=20才能稳定拟合任务要求。
+
+### 有哪些大模型的训练集？
+
+#### 预训练数据集togethercomputer/RedPajama\-Data\-1T「红睡衣」开源计划
+
+##### 高质量、大规模、高覆盖度的预训练数据集；
+
+##### 在预训练数据集上训练出的基础模型；
+
+##### • 指令调优数据集和模型，比基本模型更安全、可靠。
+
+#### 预训练数据集RedPajama\-Data\-1T已开源，包括七个子集
+
+#### 经过预处理后得到的token数量大致可<br/>以匹配Meta在原始LLaMA论文中报告的数量，并且数据预处理相关脚本也已开源。
+
+#### 完整的RedPajama\-Data\-1T数据集需要的存储容量为压缩后3TB，解压后5TB。
+
+### 进行领域大模型预训练应用哪些数据集比较好？
+
+#### 现有的开源大模型进行预训练的过程中会加入数据、论文等数据。
+
+##### 因为这些数<br/>据的数据质量较高，领域相关性比较强，知识覆盖率（密度）较大，可以让模型更适应考试
+
+##### 时领域相关的网站内容、新闻内容也是比较重<br/>要的数据。
+
+### 如何选取和构建大模型微调数据？
+
+#### 1\. 数据的多样性：
+
+##### 多样性即为数据的去重，去重这件事的核心是相似度度量
+
+##### 现在的相似度度量方法大家用的比较多<br/>的是基于对比学习构造的语义向量这套思路，<br/>当然简单的基于词袋或者tfidf的方案也是可以的
+
+##### 核心的相似度度量方法后，我们可以使用简单的onepass聚类方法进行过滤，
+
+###### 使用带优化目标的聚类：比如K\-Center\-Greedy算法，其约束条件是在最大化多样性<br/>的情况下，使指令数据集最小。
+
+##### 如果我们已经有了一批已经去重的人工处理过的高质量数据，<br/>如何寻找与这批数据不一样的数据呢？
+
+###### 简单地把已有的数据全部当成正样本打上1，然后待筛选的数据全部当成负样本打上0
+
+###### 使用deberta等构建二分类模型，并进行K\-fold的交叉验证，在交叉验证过程中，选出每一个fold过程<br/>中的测试集合里概率接近于0的样本。
+
+###### 就能把长得与已有数据不一样的数据给选出来了，
+
+#### 数据的不确定性。
+
+##### 有了质量打分模型后，我们就可以判断一些指令数据的质量高低，并且据此选出模型真正不确定的<br/>数据。
+
+##### 手动的拒绝采样，核心是选择“模型不确定”\+“数据质量达标”的那部分数据。
+
+### SFT数据集如何生成？
+
+#### 两种方法：
+
+##### 人工标注和使用LLM（比如GPT\-4）来生成的
+
+##### 人工标注对于构<br/>建垂直领域比较合适，可以减少有偏数据，但是成本略高；
+
+##### 使用LLM生成，可以在短时间内生成大<br/>量数据。
