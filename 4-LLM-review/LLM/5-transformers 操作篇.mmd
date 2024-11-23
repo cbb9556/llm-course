@@ -1,0 +1,31 @@
+[Scia Reto](https://sciareto.org) mind map   
+> __version__=`1.1`,showJumps=`true`
+---
+
+# 5\-transformers 操作篇
+> mmd.emoticon=`tree`
+
+
+## 利用 transformers 加载 Bert 模型
+
+### 模型目录和模型名称
+
+#### model\_name = 'bert\-base\-uncased'
+
+### 分词器
+
+#### tokenizer = BertTokenizer\.from\_pretrained\(model\_name\)
+
+### 载入模型
+
+#### model = BertModel\.from\_pretrained
+
+### 通过tokenizer把文本变成 token\_id
+
+#### input\_ids = tokenizer\.encode
+
+### 使用bert模型的最后一层
+
+#### last\_hidden\_states = model\(input\_ids\)\[0\]
+
+### 最后， 可以把第一个 CLS token 输入到 linear线性分类器，或者训练下游任务
