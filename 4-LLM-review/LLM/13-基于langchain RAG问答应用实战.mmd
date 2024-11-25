@@ -1,0 +1,57 @@
+[Scia Reto](https://sciareto.org) mind map   
+> __version__=`1.1`,showJumps=`true`
+---
+
+# 13\-基于langchain RAG问答应用实战
+> mmd.emoticon=`tree`
+
+
+## 13 基于langchain RAG问答应用实战
+
+### 3\.1 数据构建
+
+#### 藜麦数据（https://baike\.baidu\.com/item/藜麦/5843874）保存到 藜\.txt 文件中。
+
+### 3\.2 本地数据加载
+
+#### loader = TextLoader\("\./藜\.txt"\)<br/>documents = loader\.load\(\)
+
+### 3\.3 文档分割
+
+#### 文档分割，借助langchain的字符分割器，这里采用固定字符长度分割chunk\_size=128
+
+#### from langchain\.text\_splitter import CharacterTextSplitter
+
+#### \# 创建拆分器
+
+##### text\_splitter = CharacterTextSplitter\(chunk\_size=128, chunk\_overlap=0\)
+
+#### \# 拆分文档
+
+##### documents = text\_splitter\.split\_documents\(documents\)
+
+### 3\.4 向量化&数据入库
+
+#### 接下来对分割后的数据进行embedding，并写入数据库。这里选用
+
+#### m3e\-base作为embedding模型，向量数据库选用Chroma
+
+### 3\.5 Prompt设计
+
+#### prompt设计，这里只是一个prompt的简单示意，在实际业务场景中需要针对场景特点针对性调优。
+
+#### 【任务描述】<br/>【背景知识】<br/>【回答要求】
+
+### 3\.6 RetrievalqaChain构建
+
+#### ConversationalRetrievalQA chain 是建立在 RetrievalQAChain <br/>之上，提供历史聊天记录组件
+
+#### 如下面定义了memory来追踪聊天记录
+
+##### 在流程上，先将历史问题和当前<br/>输入问题融合为一个新的独立问题，然后再进行检索，获取问题相关知识，最后将获取的知识和生成的新<br/>问题注入Prompt让大模型生成回答。
+
+### 3\.7 高级用法
+
+#### 针对多轮对话场景，增加 question\_generator对历史对话记录进行压缩生成新的question
+
+#### 增加combine\_docs\_chain对检索得到的文本进一步融合
