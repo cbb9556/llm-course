@@ -1,0 +1,191 @@
+[Scia Reto](https://sciareto.org) mind map   
+> __version__=`1.1`,showJumps=`true`
+---
+
+# 31\-大模型（LLMs）推理面
+> mmd.emoticon=`tree`
+
+
+## 大模型推理面
+
+### 为什么大模型推理时显存涨的那么多还一直占着？
+
+#### 首先，序列太长了，有很多Q/K/V
+
+#### 其次，因为是逐个预测next token，每次要缓存K/V加速解码
+
+### 大模型在gpu和cpu上推理速度如何？
+
+#### 7B模型为例
+
+##### NVIDIA A100：
+
+###### 推理速度可以达到 200 tokens/s 以上
+
+##### NVIDIA RTX 4090：
+
+###### 可以达到 80 \- 150 tokens/s 左右
+
+##### Intel Core i9：
+
+######  5 \- 15 tokens/s 左右。
+
+##### AMD Ryzen 9
+
+###### 每秒几个到十几个 token
+
+### 推理速度上，int8和fp16比起来怎么样？
+
+#### int8模式一般推理会明显变慢
+
+##### 但在实际推理过程中，需要进行量化和反量化的操作。量化是将 FP32 的数值映射到 INT8 的范围内，<br/>反量化则是将 INT8 的结果转换回 FP32 以便进行后续的计算。<br/>这些额外的操作会增加计算的复杂性和时间开销，特别是对于一些复杂的模型和大规模的数据，<br/>量化与反量化的时间成本可能会超过 INT8 带来的计算优势，导致推理速度变慢
+> align=`left`
+
+
+### 大模型生成时的参数怎么设置？
+
+#### 建议去调整下 top\_p, num\_beams, repetition\_renalty, temperature, do\_sample=True;
+
+#### 提高核采样的概率阈值，以增加候选标记的数量并增加生成的多样性。
+
+##### top\_p=0\.9
+
+#### 数据生成有重复，
+
+##### 调高repetition\_renalty
+
+#### 生成任务表达单一的，样本也不多的
+
+##### 可适当调低 temperature，生成的样子跟训练集的比较像；
+
+#### 如果要复现训<br/>练集的效果
+
+##### temperature=0\.01即可
+
+###  有哪些省内存的大语言模型训练/微调/推理方法？
+
+#### 举例说明
+
+##### 即使 RTX 3090 有着 24GB 的 RAM
+
+###### 是除了 A100 之外显存最大的显卡
+
+###### 但使用一块 RTX 3090 依<br/>然无法 fp32 精度训练最小号的 LLaMA\-6B
+
+#### Memory\-Efficient 的 LLMs 的训练/微调/推理方法
+
+##### fp16<br/>• int8<br/>• LoRA<br/>• Gradient checkpointing<br/>• Torch FSDP<br/>• CPU offloading<br/>
+> align=`left`
+
+
+#### FP16\-混合精度训练
+
+##### 思路
+
+######  forward pass 和 gradient computation 的时候使用 fp16 来加速
+
+###### 在更新参数时使用 fp32
+
+##### 实例
+
+###### 使用torch fp16 推理：
+
+####### torch 实现
+
+######## https://pytorch\.org/docs/stable/notes/amp\_examples\.html
+
+####### 使用 model\.half\(\) 将模型转换为fp16
+
+###### 使用 Huggingface Transformers：
+
+####### huggingface实现
+
+######## https://huggingface\.co/docs/transformers/perf\_train\_gpu\_one\#fp16\-training
+
+####### 在 TrainingArguments 里声明 
+
+######## fp16=True
+
+#### Int8\-bitsandbytes
+
+##### Int8 是个很极端的数据类型，它最多只能表示 \- 128～127 的数字，并且完全没有精度。
+
+##### 为了在训练和 inference 中使用这个数据类型，<br/>bitsandbytes 使用了两个方法最大程度地降低了其带来的误差：
+
+###### vector\-wise quantization
+
+###### 混合精度分解
+
+###### Huggingface 在这篇文章中用动图解释了 quantization 的实现
+
+####### https://huggingface\.co/blog/hf\-bitsandbytesintegration
+
+###### 论文：
+
+####### LLM\.int8\(\): 8\-bit Matrix Multiplication for Transformers at Scale：
+
+######## https://arxiv\.org/abs/2208\.07339
+
+##### 借助 Huggingface PEFT，使用 int8 训练 opt\-6\.5B 的完整流程：
+
+###### https://github\.com/huggingface/peft/blob/main/examples/int8\_training/Finetune\_opt\_bnb\_peft\.ipynb
+
+#### LoRA
+
+##### LoRA 的论文：
+
+###### https://arxiv\.org/pdf/2106\.09685\.pdf
+
+##### 借助 Huggingface PEFT 框架，使用 LoRA 微调 mt0：
+
+###### https://github\.com/huggingface/peft/blob/main/examples/conditional\_generation/peft\_lora\_seq2seq\.ipynb
+
+####  Gradient Checkpointing
+
+##### Explore Gradient\-Checkpointing in PyTorch
+
+###### https://qywu\.github\.io/2019/05/22/explore\-gradientcheckpointing\.html
+
+##### 在 Huggingface Transformers 中使用：
+
+###### https://huggingface\.co/docs/transformers/v4\.27\.2/en/perf\_train\_gpu\_one\#gradient\-checkpointing
+
+#### Torch FSDP\+CPU offload
+
+##### 和 DeepSpeed 类似，均通过 ZeRO 等分布优化算法，<br/>减少内存的占用量。
+
+###### ZeRO 的大致实现方法
+
+####### https://huggingface\.co/blog/zero\-deepspeed\-fairscale
+
+##### 其将模型参数，梯度和优化器状态分布至多个 GPU 上，<br/>而非像 DDP 一样，在每个 GPU 上保留完整副本。
+
+##### CPU offload 则允许在一个 back propagation 中，<br/>将参数动态地从 GPU \-\> CPU, CPU \-\> GPU 进行转移，从而节省 GPU 内存。
+
+###### cpu\_offload 也只需要一行代码：
+
+####### https://pytorch\.org/blog/introducing\-pytorch\-fully\-sharded\-data\-parallel\-api/
+
+##### 查看 FSDP 支持的模型：
+
+###### https://pytorch\.org/docs/stable/fsdp\.html
+
+###### 在 Huggingface Transformers 中使用 Torch FSDP：
+
+####### https://huggingface\.co/docs/transformers/v4\.27\.2/en/main\_classes/trainer\#transformers\.Trainin
+
+### 如何让大模型输出合规化
+
+#### 对于严肃的场景，以免引起用户的投诉。所以需要进合并处理。
+
+#### 模型生成内容，再把这些内容生成向量，再查询话术向量库，得到最相似的话术。
+
+#### 如果查询结果或相似得分比较阈值低或者查询不到结果，则走兜底策略。
+
+##### 兜底策略按用户所在的对话阶段，实验不同的兜底<br/>话术。或者使用万能兜底话术。
+
+### 模型输出的分布比较稀疏，怎么处理？
+
+#### 使用softmax函数的温度参数调节来平滑输出分布
+
+#### 或者引入正则化技术，如Dropout，以减少模型对特定类别的过度依赖。
