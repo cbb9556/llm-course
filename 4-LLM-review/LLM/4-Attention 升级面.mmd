@@ -12,17 +12,15 @@
 
 #### https://zhuanlan\.zhihu\.com/p/700197845
 
-#### 计算每个token的 attention， 只需要 更新 KV cache就行， 前面的token计算完后更新KV cache<br/>后面token计算的 attention 与前面token无关， 用空间换时间。
+#### 每个位置的atten\-score计算，都是使用q去，搜索历史的k\-v，和当前的k\-v，所以历史的k\-v存入cache<br/>以加速运算
 
-##### 说实话不是很懂也
-
-### 如何解决，传统 Attention 存在上下文长度约束问题
+### 如何解决，传统 Attention <br/>存在上下文长度约束问题
 
 #### 为何 传统注意力 计算时间复杂度是 O（n^2），
 
 #####  因为计算 Q\-K，需要双向注意力，前后看
 
-##### softmax之后，是一个数字，这个数字，乘到 V， 是并行的 O（1）
+##### softmax之后，每个位置，是一个权重数字，这个数字，乘到 V， 是并行的 O（1）
 
 #### 为何有长度约束问题
 
