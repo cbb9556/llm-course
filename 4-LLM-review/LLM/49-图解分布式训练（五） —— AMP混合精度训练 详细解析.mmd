@@ -2,6 +2,74 @@
 > __version__=`1.1`,showJumps=`true`
 ---
 
-# The Root Topic
+# AMP混合精度训练
 > mmd.emoticon=`tree`
 
+
+## 一、什么是自动混合精度训练\(AMP\)
+
+### 在PyTorch中，一共有10种类型的tensor
+
+#### • torch\.FloatTensor \(32\-bit floating point\)<br/>• torch\.DoubleTensor \(64\-bit floating point\)<br/>• torch\.HalfTensor \(16\-bit floating point 1\)<br/>• torch\.BFloat16Tensor \(16\-bit floating point 2\)<br/>• torch\.ByteTensor \(8\-bit integer \(unsigned\)\)<br/>• torch\.CharTensor \(8\-bit integer \(signed\)\)<br/>• torch\.ShortTensor \(16\-bit integer \(signed\)\)<br/>• torch\.IntTensor \(32\-bit integer \(signed\)\)<br/>• torch\.LongTensor \(64\-bit integer \(signed\)\)<br/>• torch\.BoolTensor \(Boolean\)
+> align=`left`
+
+
+### 默认的Tensor是32\-bit floating point，这就是32位浮点型精度的Tensor。
+
+#### FP32 精度高， 计算量大， 用于 梯度
+
+#### torch\.HalfTensor \(16\-bit floating point 1\)
+
+##### FP 16
+
+#### torch\.FloatTensor \(32\-bit floating point）
+
+##### FP32
+
+#### torch\.BFloat16Tensor \(16\-bit floating point 2\)
+
+##### BP 16
+
+### 只有支持Tensor core的CUDA硬件才能享受到AMP的好处（比如2080ti显卡）
+
+## 二、为什么需要自动混合精度？
+
+### FP16 
+
+#### 劣势
+
+##### 数值范围小（更容易Overflow / Underflow）
+
+##### 舍入误差（Rounding Error，导致<br/>一些微小的梯度信息达不到16bit精度的最低分辨率，从而丢失）。
+
+#### 优势
+
+##### 存储小、计算快、更好的利用CUDA设备的Tensor Core
+
+##### 训练的时候可以减少<br/>显存的占用（可以增加batchsize了），同时训练速度更快；
+
+##### 通信量少
+
+#### 消除torch\.HalfTensor的劣势
+
+##### 梯度 scaling缩放， 
+
+###### 通过放大loss的值来防止梯度的underflow（这只是BP的时候传递梯度信息使用，<br/>真正更新权重的时候还是要把放大的梯度再unscale回去）；
+
+###### 损失标度方法
+
+####### 只需要将损失乘以某个大数字 \(如1024\)，低了梯度发生下溢的几率。计算出梯度后，只需将其除以1024就可以得到准确值。
+
+###### 动态选择损失标度方法
+
+####### 发生溢出，跳过优化器更新，损失标度减半;连续N个steps没有发生溢出，损失标度翻倍
+
+##### 回落到torch\.FloatTensor，
+
+###### 这就是混合一词的由来
+
+### 什么时候用torch\.FloatTensor，<br/>什么时候用半精度浮点型呢？
+
+#### 如下操作中tensor会被自动转化为半精度浮点型的torch\.HalfTensor：
+
+##### \_\_matmul\_\_  addbmm  addmm  addmv  addr  baddbmm  bmm  chain\_matmul  conv1d  conv2d  conv3d  conv\_transpose1d  conv\_transpose2d  conv\_transpose3d  linear  matmul  mm  mv  prelu
